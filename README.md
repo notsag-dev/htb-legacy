@@ -21,7 +21,7 @@ Flags:
  - `-oN`: Output in normal nmap format
 
 ```
-kali@kali:~$ nmap -Pn -sV -sC -oN legacy.nmap $LEGACY
+kali@kali:~$ nmap -sV -sC -oN legacy.nmap $LEGACY
 Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-25 20:29 EDT
 Nmap scan report for 10.10.10.4 (10.10.10.4)
 Host is up (0.25s latency).
