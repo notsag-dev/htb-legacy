@@ -175,5 +175,7 @@ Found 1 result...
     c:\Documents and Settings\Administrator\Desktop\root.txt (32 bytes)
 meterpreter >
 ```
-                                                                                               
+
+## Conclusions
+This was a straightforward box, which I was actually looking for as it is my first Windows machine on HTB. This one is also the fist Windows machine on [this list of HTB machines for OSCP preparation](https://www.reddit.com/r/oscp/comments/alf4nf/oscp_like_boxes_on_hack_the_box_credit_tj_null_on/).
                             
